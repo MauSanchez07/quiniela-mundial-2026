@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚽ Quiniela Mundial 2026 — MAITS</title>
+<style>
+:root{--bg:#0a0e1a;--bg2:#111827;--bg3:#1a2234;--card:#1e2a3a;--border:rgba(255,255,255,.08);--text:#f0f4ff;--muted:#8896a8;--gold:#f5c842;--green:#22c55e;--blue:#3b82f6;--red:#ef4444;--orange:#f97316;--purple:#a855f7}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px}
+header{background:linear-gradient(135deg,#0f172a,#1a1f35,#0f1f3d);border-bottom:1px solid var(--border);padding:1.2rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.8rem}
+.htitle{font-size:1.4rem;font-weight:700}.htitle span{color:var(--gold)}
+.hsub{color:var(--muted);font-size:.78rem;margin-top:2px}
+.hright{display:flex;align-items:center;gap:8px;font-size:.72rem;color:var(--muted)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0}
+.lastup{background:var(--bg3);border:1px solid var(--border);padding:3px 10px;border-radius:8px;font-size:.7rem}
+nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;overflow-x:auto}
+nav button{background:none;border:none;color:var(--muted);padding:.8rem 1.1rem;cursor:pointer;font-size:.82rem;font-weight:500;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s}
+nav button.act{color:var(--text);border-bottom-color:var(--gold)}
+nav button:hover:not(.act){color:var(--text)}
+main{padding:1.5rem 2rem;max-width:1400px;margin:0 auto}
+.tab{display:none}.tab.act{display:block}
+
+/* LB */
+.lb{display:grid;gap:7px}
+.lbr{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:.85rem 1.1rem;display:grid;grid-template-columns:32px 1fr auto auto auto auto auto;align-items:center;gap:10px;transition:border .2s}
+.lbr:hover{border-color:rgba(255,255,255,.15)}
+.lbr.r1{background:linear-gradient(135deg,rgba(245,200,66,.12),rgba(245,200,66,.04));border-color:rgba(245,200,66,.3)}
+.lbr.r2{background:linear-gradient(135deg,rgba(200,200,220,.1),rgba(200,200,220,.03));border-color:rgba(200,200,220,.2)}
+.lbr.r3{background:linear-gradient(135deg,rgba(205,127,50,.1),rgba(205,127,50,.03));border-color:rgba(205,127,50,.2)}
+.rnk{font-size:.9rem;font-weight:700;color:var(--muted);text-align:center}
+.r1 .rnk{color:var(--gold)}.r2 .rnk{color:#c8c8dc}.r3 .rnk{color:#cd7f32}
+.pname{font-weight:600;font-size:.92rem}
+.ptot{font-size:1.4rem;font-weight:700;color:var(--gold);min-width:36px;text-align:right}
+.ptl{font-size:.6rem;color:var(--muted);text-align:right;margin-top:1px}
+.bdg{padding:2px 7px;border-radius:20px;font-size:.68rem;font-weight:600}
+.bg{background:rgba(34,197,94,.15);color:var(--green)}.bb{background:rgba(59,130,246,.15);color:var(--blue)}
+.bp{background:rgba(168,85,247,.15);color:var(--purple)}.bo{background:rgba(249,115,22,.15);color:var(--orange)}
+
+/* MATCHES */
+.mfilters{display:flex;gap:7px;margin-bottom:1.1rem;flex-wrap:wrap;align-items:center}
+.fbtn{background:var(--card);border:1px solid var(--border);color:var(--muted);padding:5px 13px;border-radius:20px;cursor:pointer;font-size:.76rem;font-weight:500;transition:all .2s}
+.fbtn.act{background:rgba(245,200,66,.15);border-color:rgba(245,200,66,.4);color:var(--gold)}
+.fbtn:hover:not(.act){color:var(--text);border-color:rgba(255,255,255,.2)}
+.sbox{background:var(--card);border:1px solid var(--border);color:var(--text);padding:5px 13px;border-radius:20px;font-size:.76rem;min-width:160px;outline:none}
+.sbox:focus{border-color:rgba(245,200,66,.4)}
+.mc{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:.9rem 1.1rem;margin-bottom:7px}
+.mc.fin{border-color:rgba(34,197,94,.2)}
+.mhdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:7px;margin-bottom:9px}
+.mmeta{display:flex;align-items:center;gap:7px}
+.mnum{font-size:.68rem;color:var(--muted);background:var(--bg3);padding:2px 7px;border-radius:9px}
+.gbdg{font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:9px;background:rgba(59,130,246,.15);color:var(--blue)}
+.mdate{font-size:.68rem;color:var(--muted)}
+.sbdg{font-size:.68rem;font-weight:700;padding:2px 9px;border-radius:9px}
+.sfin{background:rgba(34,197,94,.15);color:var(--green)}
+.ssch{background:rgba(136,150,168,.15);color:var(--muted)}
+.msr{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:.8rem;margin-bottom:9px}
+.ts{display:flex;align-items:center;gap:8px}.ts.aw{flex-direction:row-reverse;text-align:right}
+.tfl{font-size:1.3rem}.tn{font-weight:600;font-size:.88rem}
+/* Score box — clickable when pending, static when done */
+.scbx{display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:8px;padding:7px 14px;cursor:pointer;border:1px solid transparent;transition:border .2s;position:relative}
+.scbx.editable:hover{border-color:rgba(245,200,66,.4)}
+.scbx.editing{border-color:rgba(245,200,66,.6);background:#1e2a20}
+.sn{font-size:1.5rem;font-weight:800;min-width:26px;text-align:center}
+.ss{color:var(--muted);font-size:1.1rem}.stbd{font-size:.82rem;color:var(--muted);font-weight:500}
+.edit-hint{font-size:.58rem;color:var(--muted);position:absolute;bottom:2px;left:50%;transform:translateX(-50%);white-space:nowrap;pointer-events:none}
+/* Inline score editor */
+.score-editor{display:none;align-items:center;gap:6px}
+.score-editor.show{display:flex}
+.sinp{width:40px;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:4px 6px;font-size:1.1rem;font-weight:700;text-align:center;outline:none}
+.sinp:focus{border-color:var(--gold)}
+.ssep{font-size:1rem;color:var(--muted)}
+.sbtn{background:rgba(34,197,94,.2);border:1px solid rgba(34,197,94,.35);color:var(--green);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.72rem;font-weight:700}
+.sbtn:hover{background:rgba(34,197,94,.3)}
+.sbtn-del{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:var(--red);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:.72rem;margin-left:2px}
+.sbtn-del:hover{background:rgba(239,68,68,.2)}
+/* Picks */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:4px;margin-top:8px;border-top:1px solid var(--border);padding-top:9px}
+.pc{background:var(--bg3);border-radius:6px;padding:4px 7px;font-size:.68rem;display:flex;flex-direction:column;align-items:center;gap:1px;border:1px solid var(--border);position:relative}
+.pc .pn{color:var(--muted);font-size:.62rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:78px}
+.pc .pp{font-weight:700;font-size:.72rem}
+.pc .ppt{position:absolute;top:2px;right:4px;font-size:.58rem;font-weight:700}
+.pc.exact{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.3)}.pc.exact .pp,.pc.exact .ppt{color:var(--green)}
+.pc.diff{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.25)}.pc.diff .pp,.pc.diff .ppt{color:var(--blue)}
+.pc.win{background:rgba(168,85,247,.1);border-color:rgba(168,85,247,.2)}.pc.win .pp,.pc.win .ppt{color:var(--purple)}
+.pc.miss{background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.15)}.pc.miss .pp{color:rgba(239,68,68,.6)}
+
+.stitle{font-size:1.05rem;font-weight:700;margin-bottom:.9rem}.stitle span{color:var(--gold)}
+.leg{display:flex;gap:8px;flex-wrap:wrap}
+.li{display:flex;align-items:center;gap:4px;font-size:.7rem;color:var(--muted)}
+.ld{width:9px;height:9px;border-radius:50%}
+
+/* PLAYER */
+.ptabs{display:flex;gap:5px;margin-bottom:.9rem;flex-wrap:wrap}
+.ptab{background:var(--card);border:1px solid var(--border);color:var(--muted);padding:4px 11px;border-radius:20px;cursor:pointer;font-size:.76rem}
+.ptab.act{background:rgba(245,200,66,.12);border-color:rgba(245,200,66,.35);color:var(--gold)}
+.pdc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.1rem}
+.pdh{display:flex;align-items:center;gap:11px;margin-bottom:1.1rem}
+.pav{width:44px;height:44px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;color:var(--gold);border:2px solid rgba(245,200,66,.3)}
+.pdn{font-size:1rem;font-weight:700}.pdp{font-size:1.7rem;font-weight:800;color:var(--gold)}
+.pdst{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:1rem}
+.pds{background:var(--bg3);border-radius:8px;padding:7px 9px;text-align:center}
+.pdsv{font-size:1.1rem;font-weight:700}.pdsl{font-size:.62rem;color:var(--muted);margin-top:2px}
+.pdml{display:grid;gap:4px}
+.pdmr{display:grid;grid-template-columns:26px auto 1fr auto auto;align-items:center;gap:7px;background:var(--bg3);border-radius:6px;padding:5px 9px;font-size:.73rem}
+.pdmr .gn{color:var(--muted);font-size:.66rem}.pdmr .tm{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pdmr .rs{font-weight:700}.pdmr .pk{color:var(--muted)}.pdmr .ptsv{font-weight:700;min-width:28px;text-align:right}
+.c5{color:var(--green)}.c3{color:var(--blue)}.c2{color:var(--purple)}.c1{color:var(--orange)}.c0{color:rgba(239,68,68,.5)}.cp{color:var(--muted)}
+
+/* SCORING */
+.sscards{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;margin-bottom:1.4rem}
+.ssc{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:.9rem}
+.ssc .sv{font-size:1.7rem;font-weight:800}.ssc .sl{font-size:.7rem;color:var(--muted);margin-top:2px}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:rgba(34,197,94,.9);color:#fff;padding:8px 18px;border-radius:20px;font-size:.8rem;font-weight:600;pointer-events:none;opacity:0;transition:opacity .3s;z-index:9999}
+.toast.show{opacity:1}
+
+@media(max-width:700px){
+  header,main{padding:1rem}nav{padding:0 .5rem}
+  .lbr{grid-template-columns:26px 1fr auto}.lbr>.bdg{display:none}
+  .pdst{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="htitle">⚽ Quiniela <span>Mundial 2026</span></div>
+    <div class="hsub">🇺🇸 USA · 🇲🇽 México · 🇨🇦 Canadá · 21 jugadores · 72 partidos</div>
+  </div>
+  <div class="hright">
+    <div class="dot"></div>
+    <div class="lastup" id="lastup">—</div>
+  </div>
+</header>
+<nav>
+  <button class="act" onclick="showTab('lb',this)">🏆 Tabla</button>
+  <button onclick="showTab('mt',this)">⚽ Partidos</button>
+  <button onclick="showTab('pl',this)">👤 Jugadores</button>
+  <button onclick="showTab('sc',this)">📋 Puntuación</button>
+</nav>
+<main>
+
+<div id="tab-lb" class="tab act">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px">
+    <div class="stitle" style="margin:0">Tabla de posiciones <span id="clabel"></span></div>
+    <div class="leg">
+      <div class="li"><div class="ld" style="background:var(--green)"></div>Exacto 5pts</div>
+      <div class="li"><div class="ld" style="background:var(--blue)"></div>Diferencia 3pts</div>
+      <div class="li"><div class="ld" style="background:var(--purple)"></div>Ganador 2pts</div>
+      <div class="li"><div class="ld" style="background:var(--orange)"></div>+1 extra</div>
+    </div>
+  </div>
+  <div class="lb" id="lblist"></div>
+</div>
+
+<div id="tab-mt" class="tab">
+  <div class="mfilters">
+    <button class="fbtn act" onclick="setF('all',this)">Todos</button>
+    <button class="fbtn" onclick="setF('fin',this)">✅ Finalizados</button>
+    <button class="fbtn" onclick="setF('sch',this)">⏰ Pendientes</button>
+    <input class="sbox" type="text" placeholder="Buscar equipo..." id="srch" oninput="renderM()">
+  </div>
+  <div style="font-size:.72rem;color:var(--muted);margin-bottom:.8rem">Toca el marcador de cualquier partido para editar el resultado</div>
+  <div id="mtlist"></div>
+</div>
+
+<div id="tab-pl" class="tab">
+  <div class="ptabs" id="ptabs"></div>
+  <div id="pldet"></div>
+</div>
+
+<div id="tab-sc" class="tab">
+  <div class="stitle">Sistema de puntuación</div>
+  <div class="sscards">
+    <div class="ssc"><div class="sv c5">5 pts</div><div class="sl">Marcador exacto</div></div>
+    <div class="ssc"><div class="sv c3">3 pts</div><div class="sl">Diferencia correcta (solo victorias)</div></div>
+    <div class="ssc"><div class="sv c2">2 pts</div><div class="sl">Ganador o empate correcto</div></div>
+    <div class="ssc"><div class="sv c1">+1 pt</div><div class="sl">Goles de un equipo acertados</div></div>
+    <div class="ssc"><div class="sv" style="color:var(--red)">0 pts</div><div class="sl">Falló todo</div></div>
+  </div>
+  <div class="stitle">Cómo editar resultados</div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;font-size:.82rem;color:var(--muted);max-width:480px;line-height:1.7">
+    Ve a la pestaña <strong style="color:var(--text)">Partidos</strong> y toca el marcador de cualquier partido.<br>
+    Aparece un editor con dos campos de goles. Guarda y los puntos se recalculan al instante.<br>
+    Los resultados se guardan en el navegador (localStorage) y persisten al recargar.
+  </div>
+</div>
+
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+const P=["Abascal","Andrea","Anton","Borja","Cami","Checo","Diego Puig","Oscar","Fran","Iago","Iker","José Ángel","Manuel C","José Daniel","Mau","Lupita","Maitane","J.Manuel","Migue","Navarro","Nekane"];
+const FLAGS={"México":"🇲🇽","Sudáfrica":"🇿🇦","Corea del Sur":"🇰🇷","Chequia":"🇨🇿","Canadá":"🇨🇦","Bosnia y Herz.":"🇧🇦","Estados Unidos":"🇺🇸","Paraguay":"🇵🇾","Catar":"🇶🇦","Suiza":"🇨🇭","Brasil":"🇧🇷","Marruecos":"🇲🇦","Haití":"🇭🇹","Escocia":"🏴󠁧󠁢󠁳󠁣󠁴󠁿","Australia":"🇦🇺","Turquía":"🇹🇷","Alemania":"🇩🇪","Curazao":"🇨🇼","Costa de Marfil":"🇨🇮","Ecuador":"🇪🇨","Países Bajos":"🇳🇱","Japón":"🇯🇵","Suecia":"🇸🇪","Túnez":"🇹🇳","Bélgica":"🇧🇪","Egipto":"🇪🇬","Irán":"🇮🇷","Nueva Zelanda":"🇳🇿","España":"🇪🇸","Cabo Verde":"🇨🇻","Arabia Saudita":"🇸🇦","Uruguay":"🇺🇾","Francia":"🇫🇷","Senegal":"🇸🇳","Irak":"🇮🇶","Noruega":"🇳🇴","Argentina":"🇦🇷","Argelia":"🇩🇿","Austria":"🇦🇹","Jordania":"🇯🇴","Portugal":"🇵🇹","R.D. Congo":"🇨🇩","Uzbekistán":"🇺🇿","Colombia":"🇨🇴","Inglaterra":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Croacia":"🇭🇷","Ghana":"🇬🇭","Panamá":"🇵🇦"};
+
+const M=[
+  {id:1,g:"A",d:"2026-06-11",h:"México",a:"Sudáfrica",p:["2-0","2-0","2-0","2-0","2-0","2-0","2-0","2-1","2-0","2-0","2-1","2-0","3-1","2-0","2-0","1-0","3-0","2-0","4-0","2-0","3-1"]},
+  {id:2,g:"A",d:"2026-06-11",h:"Corea del Sur",a:"Chequia",p:["1-1","2-2","0-1","1-1","1-1","1-1","1-1","1-0","1-1","1-1","2-1","1-1","1-0","1-1","1-1","1-1","1-0","1-1","3-1","1-0","2-1"]},
+  {id:3,g:"B",d:"2026-06-12",h:"Canadá",a:"Bosnia y Herz.",p:["3-1","2-1","1-1","2-1","1-1","2-1","2-1","1-0","1-1","2-1","2-1","2-1","3-0","1-2","2-0","2-1","2-1","2-0","2-0","0-1","2-0"]},
+  {id:4,g:"B",d:"2026-06-12",h:"Estados Unidos",a:"Paraguay",p:["3-0","1-0","2-1","1-1","2-1","3-1","2-0","1-0","2-0","2-0","2-0","1-0","2-0","1-2","2-1","2-1","2-0","2-0","3-1","2-1","2-0"]},
+  {id:5,g:"D",d:"2026-06-13",h:"Catar",a:"Suiza",p:["0-2","0-2","1-3","1-2","0-2","0-3","0-2","0-2","0-2","1-3","0-2","0-2","2-2","0-2","1-3","2-2","0-1","0-3","1-3","0-3","1-2"]},
+  {id:6,g:"C",d:"2026-06-13",h:"Brasil",a:"Marruecos",p:["4-1","2-1","2-2","2-1","2-1","3-1","3-1","2-1","2-1","1-2","2-1","2-1","3-0","3-2","2-0","3-2","2-1","2-0","2-2","3-2","3-0"]},
+  {id:7,g:"C",d:"2026-06-13",h:"Haití",a:"Escocia",p:["2-2","0-2","0-1","1-2","0-2","0-2","1-1","0-3","1-2","0-4","0-2","0-4","1-0","0-2","1-2","3-2","0-2","0-2","0-1","0-0","1-2"]},
+  {id:8,g:"D",d:"2026-06-13",h:"Australia",a:"Turquía",p:["1-2","1-2","0-2","1-2","1-2","1-2","1-2","0-2","0-2","1-3","1-2","0-3","1-2","1-3","0-2","2-1","1-2","1-1","2-3","1-3","2-1"]},
+  {id:9,g:"E",d:"2026-06-14",h:"Alemania",a:"Curazao",p:["3-0","3-0","3-0","4-0","4-0","4-0","4-0","4-0","4-0","6-0","3-0","9-0","6-0","3-0","6-0","3-1","2-0","5-0","3-0","3-0","3-0"]},
+  {id:10,g:"E",d:"2026-06-14",h:"Costa de Marfil",a:"Ecuador",p:["1-1","1-1","0-2","1-1","1-2","2-2","1-1","2-2","2-1","1-1","1-2","0-2","2-2","1-2","1-1","1-1","1-1","1-2","1-3","0-1","0-1"]},
+  {id:11,g:"F",d:"2026-06-14",h:"Países Bajos",a:"Japón",p:["3-1","2-1","2-2","2-1","2-1","2-1","2-1","1-1","1-2","1-1","2-1","2-1","2-1","1-1","2-1","4-2","2-1","2-1","3-1","2-2","2-2"]},
+  {id:12,g:"F",d:"2026-06-14",h:"Suecia",a:"Túnez",p:["1-0","2-0","2-0","1-0","2-0","2-1","1-1","1-0","2-0","2-0","2-0","1-0","2-1","2-1","2-0","3-2","2-0","2-0","2-0","2-0","2-1"]},
+  {id:13,g:"G",d:"2026-06-15",h:"Bélgica",a:"Egipto",p:["4-0","2-0","2-0","2-1","2-1","2-1","3-0","2-0","2-0","1-1","2-1","2-1","2-1","2-1","2-1","2-1","2-0","2-0","3-1","2-1","2-0"]},
+  {id:14,g:"G",d:"2026-06-15",h:"Irán",a:"Nueva Zelanda",p:["0-1","2-0","1-1","2-0","2-0","1-1","1-0","1-1","2-0","0-0","1-0","1-2","0-2","2-2","1-0","2-2","1-0","1-0","3-3","1-0","0-2"]},
+  {id:15,g:"H",d:"2026-06-15",h:"España",a:"Cabo Verde",p:["2-0","3-0","3-0","3-0","4-0","3-0","4-0","5-0","3-0","4-0","3-0","5-0","2-0","3-0","5-0","4-1","4-0","4-0","5-0","3-0","2-0"]},
+  {id:16,g:"H",d:"2026-06-15",h:"Arabia Saudita",a:"Uruguay",p:["0-2","0-2","0-3","0-2","1-2","0-2","0-3","0-1","0-2","0-2","0-2","1-2","1-3","1-2","1-2","1-2","1-3","0-2","2-2","0-4","1-1"]},
+  {id:17,g:"I",d:"2026-06-16",h:"Francia",a:"Senegal",p:["2-0","3-1","3-1","2-1","3-1","3-1","3-1","2-0","2-1","2-1","2-1","2-0","3-2","3-1","2-0","4-1","2-1","2-0","3-1","2-3","3-1"]},
+  {id:18,g:"I",d:"2026-06-16",h:"Irak",a:"Noruega",p:["0-2","0-2","1-3","0-2","1-2","0-2","0-4","0-1","0-3","0-2","0-2","0-4","0-1","0-2","0-3","1-1","0-2","0-3","0-3","0-3","0-2"]},
+  {id:19,g:"J",d:"2026-06-16",h:"Argentina",a:"Argelia",p:["3-1","3-0","3-1","2-0","2-0","3-0","2-0","2-1","2-0","3-0","2-0","2-0","2-0","2-1","3-1","3-0","2-0","3-0","2-1","3-1","2-0"]},
+  {id:20,g:"J",d:"2026-06-16",h:"Austria",a:"Jordania",p:["0-0","1-0","2-1","2-0","2-0","1-0","2-0","2-1","2-0","2-0","2-0","2-0","1-0","2-0","3-0","1-1","2-0","2-0","0-0","2-1","2-0"]},
+  {id:21,g:"K",d:"2026-06-17",h:"Portugal",a:"R.D. Congo",p:["3-1","3-0","4-0","2-1","3-0","3-1","3-0","4-1","3-0","3-0","2-0","5-0","3-0","3-0","3-0","4-2","3-0","2-0","4-0","3-1","2-0"]},
+  {id:22,g:"K",d:"2026-06-17",h:"Uzbekistán",a:"Colombia",p:["0-3","1-2","1-3","0-2","0-2","0-2","0-2","0-1","0-3","0-2","0-2","0-5","1-3","0-2","0-3","2-0","0-2","0-1","1-2","1-3","0-2"]},
+  {id:23,g:"L",d:"2026-06-17",h:"Inglaterra",a:"Croacia",p:["2-2","2-1","2-2","2-1","2-1","2-1","2-1","2-1","2-1","4-1","2-1","1-1","1-1","2-1","2-1","3-1","2-1","2-1","2-4","2-2","0-0"]},
+  {id:24,g:"L",d:"2026-06-17",h:"Ghana",a:"Panamá",p:["0-1","2-0","2-1","1-1","1-1","1-0","1-1","2-0","0-1","2-1","1-0","2-0","0-2","1-2","1-0","1-1","1-0","1-0","2-2","0-1","0-1"]},
+  {id:25,g:"A",d:"2026-06-18",h:"México",a:"Corea del Sur",p:["3-1","2-1","2-0","1-1","1-1","2-1","2-1","1-0","2-1","1-1","1-1","2-1","1-1","2-1","3-2","1-1","2-1","2-1","2-1","2-1","3-2"]},
+  {id:26,g:"A",d:"2026-06-18",h:"Chequia",a:"Sudáfrica",p:["1-1","2-0","1-1","2-0","0-2","1-1","1-1","0-2","2-1","1-1","2-0","1-0","1-2","2-0","0-1","2-0","2-0","2-0","1-2","1-0","1-1"]},
+  {id:27,g:"B",d:"2026-06-18",h:"Canadá",a:"Catar",p:["2-1","2-0","1-0","2-0","2-0","1-0","2-0","0-1","2-0","1-0","2-0","2-0","2-0","2-0","2-1","2-3","2-0","3-0","2-2","1-0","2-1"]},
+  {id:28,g:"B",d:"2026-06-18",h:"Suiza",a:"Bosnia y Herz.",p:["2-1","2-1","2-0","2-1","1-0","2-1","2-0","0-1","2-0","2-1","1-0","1-1","2-0","2-1","2-0","1-1","1-0","2-0","3-1","2-0","2-1"]},
+  {id:29,g:"C",d:"2026-06-19",h:"Brasil",a:"Haití",p:["4-0","4-0","3-0","4-0","4-0","3-0","3-0","4-0","3-0","5-0","3-0","5-0","2-0","3-0","4-0","3-1","3-0","4-0","5-0","5-0","3-0"]},
+  {id:30,g:"C",d:"2026-06-19",h:"Escocia",a:"Marruecos",p:["1-1","1-2","0-3","1-2","1-2","1-2","0-2","0-1","1-2","0-1","0-2","1-2","0-2","1-2","0-2","1-2","1-3","0-1","1-4","1-2","0-1"]},
+  {id:31,g:"D",d:"2026-06-19",h:"Estados Unidos",a:"Australia",p:["3-2","2-0","2-1","2-1","2-0","2-1","2-2","2-0","2-0","2-1","2-0","1-0","2-1","3-1","2-1","3-1","1-0","2-0","3-1","3-1","3-1"]},
+  {id:32,g:"D",d:"2026-06-19",h:"Turquía",a:"Paraguay",p:["1-0","2-1","2-0","1-1","3-1","1-0","1-1","2-2","2-1","2-0","1-0","2-1","2-0","2-1","2-2","2-1","1-0","2-1","2-0","3-1","0-0"]},
+  {id:33,g:"E",d:"2026-06-20",h:"Alemania",a:"Costa de Marfil",p:["2-0","3-0","3-0","2-1","2-1","3-1","2-0","1-0","2-1","3-0","2-0","2-0","6-0","2-1","3-1","3-1","2-0","3-1","3-0","1-0","3-1"]},
+  {id:34,g:"E",d:"2026-06-20",h:"Ecuador",a:"Curazao",p:["2-0","1-0","4-0","3-0","3-0","0-0","2-0","2-0","2-0","1-0","3-0","3-0","2-1","2-0","3-1","1-1","3-0","2-0","1-0","3-0","1-0"]},
+  {id:35,g:"F",d:"2026-06-20",h:"Países Bajos",a:"Suecia",p:["3-1","2-1","2-1","2-1","3-1","2-0","2-0","1-0","2-1","2-1","2-0","3-1","3-0","3-1","2-0","4-2","2-1","2-0","3-3","2-1","2-1"]},
+  {id:36,g:"F",d:"2026-06-20",h:"Túnez",a:"Japón",p:["1-2","0-2","1-3","1-2","1-4","0-2","0-2","0-1","0-2","0-2","0-2","0-2","1-2","0-2","0-2","1-3","0-1","0-2","2-2","0-2","0-2"]},
+  {id:37,g:"G",d:"2026-06-21",h:"Bélgica",a:"Irán",p:["3-1","2-1","2-0","2-1","3-1","2-0","2-0","2-0","2-0","1-0","2-0","3-0","2-0","2-0","3-0","2-1","2-0","2-0","3-3","3-1","2-1"]},
+  {id:38,g:"G",d:"2026-06-21",h:"Nueva Zelanda",a:"Egipto",p:["1-0","0-1","0-0","0-2","0-2","1-2","0-1","0-0","0-2","1-2","0-1","0-0","1-1","0-1","0-2","2-2","0-0","0-3","1-1","3-1","2-1"]},
+  {id:39,g:"H",d:"2026-06-21",h:"España",a:"Arabia Saudita",p:["3-0","3-1","2-0","3-0","3-1","3-1","3-0","3-0","3-0","5-0","3-0","3-0","2-1","3-1","3-1","4-1","3-1","3-0","4-2","3-0","3-0"]},
+  {id:40,g:"H",d:"2026-06-21",h:"Uruguay",a:"Cabo Verde",p:["2-0","2-0","3-0","2-1","2-0","3-0","2-0","3-0","3-0","3-0","2-0","5-0","3-1","2-0","2-0","1-2","2-0","2-0","4-1","2-0","0-0"]},
+  {id:41,g:"I",d:"2026-06-22",h:"Francia",a:"Irak",p:["3-0","4-0","3-0","3-0","3-0","2-0","3-0","3-0","4-0","5-0","3-0","5-0","3-0","3-0","5-0","3-1","2-0","4-0","2-1","3-0","3-0"]},
+  {id:42,g:"I",d:"2026-06-22",h:"Noruega",a:"Senegal",p:["2-1","1-1","2-2","1-1","1-2","2-2","1-1","1-1","2-2","2-1","1-1","2-1","2-2","2-1","2-2","3-0","1-1","1-1","3-2","2-2","2-0"]},
+  {id:43,g:"J",d:"2026-06-22",h:"Argentina",a:"Austria",p:["2-0","2-0","3-1","2-0","2-1","3-1","2-0","2-1","2-1","2-1","2-1","2-1","3-1","2-1","2-0","3-1","3-1","2-0","4-0","2-1","3-0"]},
+  {id:44,g:"J",d:"2026-06-22",h:"Jordania",a:"Argelia",p:["0-0","0-1","0-0","1-2","0-2","1-1","0-1","2-2","0-2","0-0","1-2","0-1","0-0","0-1","1-2","0-0","1-2","0-2","0-3","0-1","1-1"]},
+  {id:45,g:"K",d:"2026-06-23",h:"Portugal",a:"Uzbekistán",p:["3-1","3-1","4-1","3-0","2-0","2-0","2-0","2-0","3-0","5-0","3-0","9-0","4-0","3-0","4-0","3-0","4-0","4-0","4-1","4-1","3-0"]},
+  {id:46,g:"K",d:"2026-06-23",h:"Colombia",a:"R.D. Congo",p:["3-1","2-0","3-1","2-1","2-1","2-0","2-0","2-1","3-0","3-0","2-0","5-0","2-0","3-0","2-0","1-1","2-0","2-0","3-1","2-0","2-2"]},
+  {id:47,g:"L",d:"2026-06-23",h:"Inglaterra",a:"Ghana",p:["2-0","3-1","2-0","2-1","2-0","2-1","2-0","2-0","2-0","2-1","2-0","2-1","4-0","2-1","3-0","3-1","3-0","3-0","2-0","2-0","2-0"]},
+  {id:48,g:"L",d:"2026-06-23",h:"Panamá",a:"Croacia",p:["0-2","1-2","0-2","0-2","0-2","1-3","0-2","1-2","0-2","0-1","0-2","0-1","0-2","1-2","1-3","2-1","0-2","0-2","0-2","0-1","1-3"]},
+  {id:49,g:"A",d:"2026-06-26",h:"Chequia",a:"México",p:["0-2","1-2","1-2","1-1","1-2","1-3","0-2","1-1","1-2","0-2","1-2","2-3","1-1","1-2","1-2","1-1","1-0","2-0","1-3","1-1","2-3"]},
+  {id:50,g:"A",d:"2026-06-26",h:"Sudáfrica",a:"Corea del Sur",p:["1-0","1-2","1-0","0-2","0-2","1-2","1-1","0-0","1-2","0-1","0-2","1-3","0-0","1-2","1-2","2-3","0-2","0-2","1-2","0-1","1-2"]},
+  {id:51,g:"B",d:"2026-06-26",h:"Suiza",a:"Canadá",p:["1-0","1-1","2-1","1-1","1-1","1-1","1-1","2-0","2-1","2-1","1-1","1-0","0-0","2-1","1-1","1-2","1-1","1-1","2-3","2-1","1-1"]},
+  {id:52,g:"B",d:"2026-06-26",h:"Bosnia y Herz.",a:"Catar",p:["0-0","2-0","0-0","2-1","2-1","0-0","1-0","2-2","1-0","1-1","2-0","1-0","0-1","2-0","2-1","2-1","2-0","1-1","1-3","2-0","0-1"]},
+  {id:53,g:"C",d:"2026-06-27",h:"Escocia",a:"Brasil",p:["0-2","0-3","0-3","0-3","1-3","2-0","0-2","0-1","0-2","1-3","0-3","1-2","0-5","1-2","1-3","2-2","0-3","0-2","1-4","1-3","1-3"]},
+  {id:54,g:"C",d:"2026-06-27",h:"Marruecos",a:"Haití",p:["2-0","3-0","3-0","3-1","3-0","3-0","2-0","2-0","3-0","4-0","3-0","4-0","1-1","3-1","2-0","1-2","3-0","2-0","4-0","2-0","2-1"]},
+  {id:55,g:"D",d:"2026-06-27",h:"Turquía",a:"Estados Unidos",p:["1-3","1-1","2-1","1-1","1-1","2-1","1-1","1-0","2-1","2-1","1-1","2-1","1-2","2-1","2-1","1-2","1-1","1-1","1-1","3-2","0-1"]},
+  {id:56,g:"D",d:"2026-06-27",h:"Paraguay",a:"Australia",p:["0-1","1-2","1-0","1-0","1-2","2-2","1-0","1-1","2-1","1-1","1-0","2-0","0-0","2-0","1-1","3-1","1-0","1-0","2-4","2-1","1-1"]},
+  {id:57,g:"E",d:"2026-06-28",h:"Ecuador",a:"Alemania",p:["0-3","1-2","1-3","1-2","1-2","0-2","0-1","1-1","1-2","1-3","1-1","2-1","1-2","2-1","0-2","1-3","0-1","1-2","1-3","2-3","0-3"]},
+  {id:58,g:"E",d:"2026-06-28",h:"Curazao",a:"Costa de Marfil",p:["2-2","0-3","0-0","0-2","0-2","0-1","0-2","0-2","0-2","0-1","0-2","0-3","0-0","0-2","0-2","1-2","0-1","0-2","4-3","0-2","1-1"]},
+  {id:59,g:"F",d:"2026-06-28",h:"Túnez",a:"Países Bajos",p:["0-2","0-2","0-2","0-2","1-4","1-3","0-2","1-2","0-3","0-3","0-2","0-3","1-3","0-2","1-3","2-4","0-2","0-3","2-3","0-3","0-2"]},
+  {id:60,g:"F",d:"2026-06-28",h:"Japón",a:"Suecia",p:["2-2","1-1","3-2","1-1","1-1","2-1","1-0","1-1","2-1","2-2","2-1","1-0","1-0","2-1","2-2","2-2","1-0","1-1","2-2","3-1","3-1"]},
+  {id:61,g:"G",d:"2026-06-29",h:"Nueva Zelanda",a:"Bélgica",p:["0-2","0-3","1-2","0-3","0-3","1-2","0-2","0-2","0-3","1-3","0-3","0-2","0-1","1-3","0-4","1-2","0-3","0-2","0-3","0-2","2-1"]},
+  {id:62,g:"G",d:"2026-06-29",h:"Egipto",a:"Irán",p:["1-0","1-1","1-1","1-1","1-1","2-0","1-1","2-2","1-2","2-0","1-1","2-1","1-0","2-0","1-1","2-2","0-1","1-1","2-3","1-0","2-1"]},
+  {id:63,g:"H",d:"2026-06-29",h:"Uruguay",a:"España",p:["2-2","1-2","1-3","1-2","1-2","1-2","0-2","1-1","1-2","1-3","1-2","1-2","1-2","0-2","0-2","2-4","2-2","1-1","1-3","2-3","3-3"]},
+  {id:64,g:"H",d:"2026-06-29",h:"Cabo Verde",a:"Arabia Saudita",p:["0-0","0-1","1-2","1-1","1-2","0-1","1-1","0-2","0-2","0-2","0-1","0-2","0-0","0-3","0-1","2-3","0-1","1-1","0-3","0-2","2-1"]},
+  {id:65,g:"I",d:"2026-06-30",h:"Noruega",a:"Francia",p:["1-2","1-3","2-3","1-2","1-2","1-3","1-2","0-1","1-2","1-2","1-2","1-2","0-2","2-3","1-2","2-3","1-2","1-2","2-4","2-3","0-2"]},
+  {id:66,g:"I",d:"2026-06-30",h:"Senegal",a:"Irak",p:["1-1","2-0","3-1","3-0","2-0","2-0","2-0","2-0","2-0","3-1","2-0","3-0","0-0","2-0","2-0","1-2","1-0","2-0","1-3","3-1","2-3"]},
+  {id:67,g:"J",d:"2026-06-30",h:"Jordania",a:"Argentina",p:["0-2","0-3","0-2","0-3","0-3","0-3","0-3","1-3","0-3","0-2","0-3","0-5","0-3","0-2","0-5","1-3","0-4","0-4","1-4","0-3","0-3"]},
+  {id:68,g:"J",d:"2026-06-30",h:"Argelia",a:"Austria",p:["0-0","1-1","0-1","1-1","0-1","1-2","1-1","0-1","1-2","1-2","1-1","2-3","1-1","1-2","1-2","1-0","1-1","1-1","2-2","1-2","2-2"]},
+  {id:69,g:"K",d:"2026-07-01",h:"Colombia",a:"Portugal",p:["1-1","1-1","2-4","1-1","0-2","2-1","1-1","1-2","1-2","1-2","1-1","1-2","0-2","1-2","1-2","3-2","1-2","1-1","1-4","2-3","2-3"]},
+  {id:70,g:"K",d:"2026-07-01",h:"R.D. Congo",a:"Uzbekistán",p:["2-0","2-1","0-0","1-1","1-1","1-1","1-1","0-1","2-1","2-0","1-0","1-2","1-1","1-1","1-0","2-2","1-0","1-0","3-1","3-1","1-2"]},
+  {id:71,g:"L",d:"2026-07-01",h:"Panamá",a:"Inglaterra",p:["1-3","0-3","1-3","0-3","0-3","0-3","0-3","1-2","0-3","0-6","0-3","1-3","0-2","1-3","0-4","2-3","0-3","0-4","2-1","1-3","1-2"]},
+  {id:72,g:"L",d:"2026-07-01",h:"Croacia",a:"Ghana",p:["3-1","2-1","2-1","2-1","2-1","2-2","2-1","1-1","2-1","1-1","2-0","2-1","3-0","2-1","2-0","2-1","2-0","1-0","2-0","2-1","3-1"]}
+];
+
+// ── BASE RESULTS (hardcoded) ─────────────────────────────
+const BASE={
+  1:{rl:2,rv:0},2:{rl:2,rv:1},3:{rl:1,rv:1},4:{rl:4,rv:1},
+  5:{rl:0,rv:1},6:{rl:1,rv:1},7:{rl:0,rv:2},8:{rl:2,rv:1},
+  9:{rl:7,rv:1}
+};
+
+// ── RESULTS: base + localStorage overrides ───────────────
+let RES={};
+function loadRES(){
+  RES={...BASE};
+  try{
+    const saved=JSON.parse(localStorage.getItem('wc2026')||'{}');
+    Object.entries(saved).forEach(([k,v])=>{RES[+k]=v;});
+  }catch(e){}
+}
+function saveRES(id,rl,rv){
+  let saved={};
+  try{saved=JSON.parse(localStorage.getItem('wc2026')||'{}');}catch(e){}
+  if(rl===null){delete saved[id];}else{saved[id]={rl,rv};}
+  localStorage.setItem('wc2026',JSON.stringify(saved));
+  loadRES();
+}
+loadRES();
+
+// ── PUNTOS ───────────────────────────────────────────────
+function pp(s){const[gl,gv]=s.split('-').map(Number);return{gl,gv}}
+function calcPts(id,pick){
+  const r=RES[id];if(!r)return null;
+  const{rl,rv}=r;const{gl,gv}=pp(pick);
+  let p=0,x=0;
+  const rd=rl-rv,pd=gl-gv;
+  if(gl===rl&&gv===rv){p=5;}
+  else if(Math.sign(rd)!==0&&Math.sign(pd)===Math.sign(rd)&&rd===pd){p=3;}
+  else if(Math.sign(rd)===Math.sign(pd)){p=2;}
+  if(p<5){if(gl===rl)x++;if(gv===rv)x++;}
+  return{p,x,t:p+x};
+}
+function chipCls(id,pick){
+  if(!RES[id])return'';
+  const r=calcPts(id,pick);if(!r)return'';
+  if(r.p===5)return'exact';if(r.p===3)return'diff';if(r.p===2)return'win';return'miss';
+}
+function scoreAll(){
+  return P.map((_,pi)=>{
+    let tp=0,ex=0,df=0,wn=0,xt=0;
+    M.forEach(m=>{const r=calcPts(m.id,m.p[pi]);if(r){tp+=r.t;if(r.p===5)ex++;else if(r.p===3)df++;else if(r.p===2)wn++;xt+=r.x;}});
+    return{tp,ex,df,wn,xt};
+  });
+}
+
+// ── TOAST ────────────────────────────────────────────────
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ── LEADERBOARD ──────────────────────────────────────────
+function renderLB(){
+  const sc=scoreAll();
+  const done=Object.keys(RES).length;
+  document.getElementById('clabel').textContent=`· ${done}/72 partidos`;
+  document.getElementById('lastup').textContent=`${done} resultados · ${new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'})}`;
+  const ranked=P.map((n,i)=>({n,i,...sc[i]})).sort((a,b)=>b.tp-a.tp);
+  document.getElementById('lblist').innerHTML=ranked.map((p,r)=>`
+    <div class="lbr ${r<3?'r'+(r+1):''}">
+      <div class="rnk">${r+1}</div>
+      <div><div class="pname">${p.n}</div></div>
+      <div><div class="ptot">${p.tp}</div><div class="ptl">pts</div></div>
+      <span class="bdg bg">${p.ex} exactos</span>
+      <span class="bdg bb">${p.df} dif</span>
+      <span class="bdg bp">${p.wn} gan</span>
+      <span class="bdg bo">+${p.xt}</span>
+    </div>`).join('');
+}
+
+// ── MATCHES ──────────────────────────────────────────────
+let CF='all', activeEdit=null;
+function setF(f,b){CF=f;document.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('act'));b.classList.add('act');renderM();}
+
+function renderM(){
+  const q=(document.getElementById('srch')||{value:''}).value.toLowerCase();
+  const rows=M.filter(m=>{
+    if(q&&!m.h.toLowerCase().includes(q)&&!m.a.toLowerCase().includes(q))return false;
+    if(CF==='fin')return!!RES[m.id];
+    if(CF==='sch')return!RES[m.id];
+    return true;
+  });
+  if(!rows.length){document.getElementById('mtlist').innerHTML='<div style="color:var(--muted);padding:2rem;text-align:center">Sin partidos</div>';return;}
+  document.getElementById('mtlist').innerHTML=rows.map(m=>{
+    const r=RES[m.id];
+    const d=new Date(m.d+'T12:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'short'});
+    const chips=m.p.map((pk,pi)=>{
+      const cc=r?chipCls(m.id,pk):'';
+      const rc=r?calcPts(m.id,pk):null;
+      return`<div class="pc ${cc}"><span class="pn">${P[pi]}</span><span class="pp">${pk}</span><span class="ppt">${rc?rc.t:''}</span></div>`;
+    }).join('');
+    // Score box: if result exists show score, else show editor trigger
+    const scoreInner=r
+      ?`<div class="sn">${r.rl}</div><div class="ss">-</div><div class="sn">${r.rv}</div>`
+      :`<div class="stbd">vs</div><span class="edit-hint">toca para editar</span>`;
+    return`<div class="mc ${r?'fin':''}" id="mc-${m.id}">
+      <div class="mhdr">
+        <div class="mmeta"><span class="mnum">#${m.id}</span><span class="gbdg">G ${m.g}</span><span class="mdate">${d}</span></div>
+        <span class="sbdg ${r?'sfin':'ssch'}">${r?'✅ Finalizado':'⏰ Pendiente'}</span>
+      </div>
+      <div class="msr">
+        <div class="ts"><span class="tfl">${FLAGS[m.h]||'🏳'}</span><span class="tn">${m.h}</span></div>
+        <div>
+          <div class="scbx editable" id="scbx-${m.id}" onclick="toggleEditor(${m.id})">${scoreInner}</div>
+          <div class="score-editor" id="ed-${m.id}">
+            <input class="sinp" id="rl-${m.id}" type="number" min="0" max="20" value="${r?r.rl:0}" onclick="event.stopPropagation()">
+            <span class="ssep">-</span>
+            <input class="sinp" id="rv-${m.id}" type="number" min="0" max="20" value="${r?r.rv:0}" onclick="event.stopPropagation()">
+            <button class="sbtn" onclick="applyScore(${m.id})">✓ Guardar</button>
+            ${r?`<button class="sbtn-del" onclick="deleteScore(${m.id})" title="Borrar resultado">✕</button>`:''}
+          </div>
+        </div>
+        <div class="ts aw"><span class="tfl">${FLAGS[m.a]||'🏳'}</span><span class="tn">${m.a}</span></div>
+      </div>
+      <div class="pgrid">${chips}</div>
+    </div>`;
+  }).join('');
+  activeEdit=null;
+}
+
+function toggleEditor(id){
+  const ed=document.getElementById('ed-'+id);
+  const bx=document.getElementById('scbx-'+id);
+  if(!ed)return;
+  const isOpen=ed.classList.contains('show');
+  // Close any open editor
+  if(activeEdit&&activeEdit!==id){
+    const old=document.getElementById('ed-'+activeEdit);
+    const oldbx=document.getElementById('scbx-'+activeEdit);
+    if(old){old.classList.remove('show');}
+    if(oldbx){oldbx.classList.remove('editing');}
+  }
+  if(isOpen){
+    ed.classList.remove('show');bx.classList.remove('editing');activeEdit=null;
+  }else{
+    ed.classList.add('show');bx.classList.add('editing');activeEdit=id;
+    setTimeout(()=>document.getElementById('rl-'+id)?.focus(),50);
+  }
+}
+
+function applyScore(id){
+  const rl=parseInt(document.getElementById('rl-'+id).value);
+  const rv=parseInt(document.getElementById('rv-'+id).value);
+  if(isNaN(rl)||isNaN(rv)||rl<0||rv<0){toast('⚠️ Ingresa valores válidos');return;}
+  saveRES(id,rl,rv);
+  const m=M.find(x=>x.id===id);
+  toast(`✅ ${m.h} ${rl}-${rv} ${m.a} guardado`);
+  renderAll();
+}
+
+function deleteScore(id){
+  saveRES(id,null,null);
+  const m=M.find(x=>x.id===id);
+  toast(`🗑️ Resultado de ${m.h} vs ${m.a} eliminado`);
+  renderAll();
+}
+
+// ── PLAYERS ──────────────────────────────────────────────
+let SP=0;
+function renderPTabs(){
+  document.getElementById('ptabs').innerHTML=P.map((n,i)=>`<button class="ptab ${i===SP?'act':''}" onclick="selP(${i},this)">${n}</button>`).join('');
+  renderPl();
+}
+function selP(i,b){SP=i;document.querySelectorAll('.ptab').forEach(x=>x.classList.remove('act'));b.classList.add('act');renderPl();}
+function renderPl(){
+  const sc=scoreAll()[SP];let rows='',played=0;
+  M.forEach(m=>{
+    const r=RES[m.id];const pk=m.p[SP];
+    const rc=r?calcPts(m.id,pk):null;if(r)played++;
+    const cc=rc?(rc.p===5?'c5':rc.p===3?'c3':rc.p===2?'c2':rc.x>0?'c1':'c0'):'cp';
+    rows+=`<div class="pdmr"><span class="gn">#${m.id}</span><span class="tm">${m.h} vs ${m.a}</span><span class="rs">${r?r.rl+'-'+r.rv:'?'}</span><span class="pk">${pk}</span><span class="ptsv ${cc}">${rc?rc.t:'-'}</span></div>`;
+  });
+  document.getElementById('pldet').innerHTML=`
+    <div class="pdc">
+      <div class="pdh">
+        <div class="pav">${P[SP].substring(0,2).toUpperCase()}</div>
+        <div><div class="pdn">${P[SP]}</div><div class="pdp">${sc.tp} pts</div></div>
+      </div>
+      <div class="pdst">
+        <div class="pds"><div class="pdsv c5">${sc.ex}</div><div class="pdsl">Exactos</div></div>
+        <div class="pds"><div class="pdsv c3">${sc.df}</div><div class="pdsl">Diferencia</div></div>
+        <div class="pds"><div class="pdsv c2">${sc.wn}</div><div class="pdsl">Ganador</div></div>
+        <div class="pds"><div class="pdsv" style="color:var(--orange)">+${sc.xt}</div><div class="pdsl">Extras</div></div>
+      </div>
+      <div style="font-size:.7rem;color:var(--muted);margin-bottom:8px">${played} de 72 partidos jugados</div>
+      <div class="pdml">${rows}</div>
+    </div>`;
+}
+
+// ── NAV & INIT ───────────────────────────────────────────
+function renderAll(){
+  renderLB();
+  if(document.getElementById('tab-mt').classList.contains('act'))renderM();
+  if(document.getElementById('tab-pl').classList.contains('act'))renderPl();
+}
+function showTab(t,b){
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('act'));
+  document.querySelectorAll('nav button').forEach(x=>x.classList.remove('act'));
+  document.getElementById('tab-'+t).classList.add('act');b.classList.add('act');
+  if(t==='pl')renderPTabs();
+  if(t==='mt')renderM();
+}
+
+// Enter key submits editor
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&activeEdit)applyScore(activeEdit);
+  if(e.key==='Escape'&&activeEdit){
+    const ed=document.getElementById('ed-'+activeEdit);
+    const bx=document.getElementById('scbx-'+activeEdit);
+    if(ed)ed.classList.remove('show');
+    if(bx)bx.classList.remove('editing');
+    activeEdit=null;
+  }
+});
+
+renderLB();renderM();
+</script>
+</body>
+</html>
