@@ -322,7 +322,7 @@ function renderTabla(){
     const fire=t.streak>=3?'🔥'.repeat(Math.min(t.streak,5)):'';
     h+=`<tr>
       <td><span class="rank-badge ${rc}">${pos}</span></td>
-      <td><strong>${p}</strong></td>
+      <td><strong>${displayName(p)}</strong></td>
       <td><span class="pts-pill">${t.pts}</span></td>
       <td>${t.exact}</td><td>${t.diff}</td><td>${t.win}</td>
       <td>${t.pts-t.exact*5-t.diff*3-t.win*2}</td>
@@ -560,7 +560,7 @@ function renderStats(){
     h+=`<div style="display:flex;flex-wrap:wrap;gap:8px">`;
     streakers.forEach(p=>{
       h+=`<div style="background:#fff8f0;border:1.5px solid #f5c98e;border-radius:10px;padding:8px 14px;text-align:center">
-        <div style="font-weight:700;font-size:13px">${p}</div>
+        <div style="font-weight:700;font-size:13px">${displayName(p)}</div>
         <div style="color:#e25822;font-size:18px">🔥×${totals[p].streak}</div>
       </div>`;
     });
@@ -643,7 +643,7 @@ function renderHistorico(){
   if(histFilter==='custom'){
     h+=`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">`;
     PLAYERS.forEach(p=>{
-      h+=`<button class="ptab ${histCustom.has(p)?'active':''}" onclick="toggleHistCustom('${p}')">${p}</button>`;
+      h+=`<button class="ptab ${histCustom.has(p)?'active':''}" onclick="toggleHistCustom('${p}')">${displayName(p)}</button>`;
     });
     h+=`</div>`;
   }
@@ -683,7 +683,7 @@ function renderHistorico(){
     // Legend
     const ly=PAD.top+pi*18;
     svg+=`<rect x="${PAD.left+cW+10}" y="${ly}" width="12" height="12" fill="${col}" rx="2"/>
-    <text x="${PAD.left+cW+26}" y="${ly+10}" font-size="11" fill="#333">${p} (${pts[pts.length-1]})</text>`;
+    <text x="${PAD.left+cW+26}" y="${ly+10}" font-size="11" fill="#333">${p==='Anton'?'Anton ♱':p} (${pts[pts.length-1]})</text>`;
   });
   svg+=`</svg>`;
 
@@ -733,7 +733,7 @@ function renderComparativo(){
         </div>
         <span style="font-weight:700;color:var(--red);width:32px">${vb}</span>
       </div>
-      <div style="display:flex;justify-content:space-between;font-size:10px;color:#aaa;margin-top:2px"><span>${cmpA}</span><span>${cmpB}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:#aaa;margin-top:2px"><span>${cmpA==="Anton"?"Anton 💀":cmpA}</span><span>${cmpB==="Anton"?"Anton 💀":cmpB}</span></div>
     </div>`;
   });
   h+=`</div>`;
@@ -786,13 +786,14 @@ function renderJugadores(){
   let h=`<div class="section-header"><h2>👤 Jugadores</h2></div>`;
   h+=`<div class="player-tabs">`;
   PLAYERS.forEach(p=>{
-    h+=`<button class="ptab ${p===activePlayer?'active':''}" onclick="setActivePlayer('${p}')">${p}</button>`;
+    h+=`<button class="ptab ${p===activePlayer?'active':''}" onclick="setActivePlayer('${p}')">${displayName(p)}</button>`;
   });
   h+=`</div>`;
 
   const t=totals[activePlayer];
   const rank=PLAYERS.slice().sort((a,b)=>totals[b].pts-totals[a].pts).indexOf(activePlayer)+1;
-  h+=`<div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+  const playerDisplayName=activePlayer==='Anton'?`${activePlayer} <span style='font-size:11px;color:#aaa;font-style:italic'>que chinge a su madre</span>`:activePlayer;
+  h+=`<div style="margin-bottom:12px;font-size:18px;font-weight:800">${playerDisplayName}</div><div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
     <div class="kpi" style="flex:1;min-width:100px"><div class="kpi-val">#${rank}</div><div class="kpi-label">Posición</div></div>
     <div class="kpi" style="flex:1;min-width:100px"><div class="kpi-val">${t.pts}</div><div class="kpi-label">Puntos</div></div>
     <div class="kpi" style="flex:1;min-width:100px"><div class="kpi-val">${t.exact}</div><div class="kpi-label">Exactos</div></div>
@@ -834,6 +835,10 @@ function renderJugadores(){
 function setActivePlayer(p){activePlayer=p;renderJugadores();}
 
 // ===================== UTILS =====================
+function displayName(p){
+  if(p==='Anton')return p+'<br><span style="font-size:9px;color:#aaa;font-weight:400;font-style:italic">que chinge a su madre</span>';
+  return p;
+}
 function fmtDate(d){
   if(!d)return '';
   const parts=d.split('-');
