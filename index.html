@@ -115,6 +115,21 @@ tr:hover td{background:#fafcff}
 .bn-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 4px;cursor:pointer;color:#999;font-size:10px;gap:2px;border:none;background:none;transition:color .15s}
 .bn-item.active{color:var(--green)}
 .bn-item .icon{font-size:18px}
+/* Picks panel */
+.picks-panel{display:none;background:#f7f8fa;border-top:1px solid #e8ecf0;padding:12px 14px;flex-wrap:wrap;gap:6px}
+.picks-panel.open{display:flex}
+.pick-chip{display:flex;flex-direction:column;align-items:center;padding:5px 9px;border-radius:8px;background:#fff;border:1.5px solid #e0e5ec;font-size:11px;min-width:64px;cursor:default;transition:border-color .15s}
+.pick-chip.exact{border-color:#2e8b57;background:#f0faf5}
+.pick-chip.diff{border-color:#c9a227;background:#fffbf0}
+.pick-chip.win{border-color:#3b82f6;background:#eff6ff}
+.pick-chip.miss{border-color:#e0e5ec;background:#fff;opacity:.7}
+.pick-chip.pending{border-color:#e0e5ec;background:#fff}
+.pick-name{font-weight:700;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60px}
+.pick-score{font-size:12px;font-weight:700;color:#555;margin:1px 0}
+.pick-pts{font-size:10px;font-weight:700}
+.pick-pts.p5{color:#006847}.pick-pts.p3{color:#c9a227}.pick-pts.p2{color:#3b82f6}.pick-pts.p0{color:#bbb}
+.toggle-picks{font-size:11px;color:#888;cursor:pointer;padding:2px 8px;border-radius:10px;border:1px solid #ddd;background:#fff;margin-left:6px;white-space:nowrap;flex-shrink:0}
+.toggle-picks:hover{border-color:var(--green);color:var(--green)}
 /* Select */
 select{padding:7px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:12px;outline:none;background:#fff;cursor:pointer}
 select:focus{border-color:var(--green)}
@@ -418,14 +433,32 @@ function renderPartidos(){
     const hasr=rl!==null&&rl!==undefined;
     const cls=hasr?'score-box has-result':'score-box pending';
     const label=hasr?`${rl} — ${rv}`:'? — ?';
-    h+=`<div class="match-row">
-      <div class="match-meta"><div style="font-weight:600;color:var(--green)">#${m.id}</div><div>${fmtDate(m.date)}</div></div>
-      <div class="match-teams">
-        <span class="team-name">${m.local}</span>
-        <span id="sc-wrap-${m.id}"><span class="${cls}" onclick="editScoreInline(${m.id})">${label}</span></span>
-        <span class="team-name right">${m.visitor}</span>
+    // Build picks chips
+    const chips=PLAYERS.map(p=>{
+      const pick=m.picks[p]||'—';
+      if(!hasr)return `<div class="pick-chip pending"><span class="pick-name">${p==='Anton'?'Anton*':p}</span><span class="pick-score">${pick}</span><span class="pick-pts p0">?</span></div>`;
+      const pts=calcPoints(pick,rl,rv);
+      const parts2=pick.split('-');const pl2=parseInt(parts2[0]),pv2=parseInt(parts2[1]);
+      let cat='miss';
+      if(pl2===rl&&pv2===rv)cat='exact';
+      else{const rD=rl-rv,pD=pl2-pv2;const rS=Math.sign(rD),pS=Math.sign(pD);if(rS===pS&&rS!==0&&rD===pD)cat='diff';else if(rS===pS)cat='win';}
+      const ptsCls=pts>=5?'p5':pts>=3?'p3':pts>=2?'p2':'p0';
+      return `<div class="pick-chip ${cat}"><span class="pick-name">${p==='Anton'?'Anton*':p}</span><span class="pick-score">${pick}</span><span class="pick-pts ${ptsCls}">${pts}pts</span></div>`;
+    }).join('');
+    h+=`<div style="border-bottom:1px solid #f0f2f5">
+      <div class="match-row" style="border-bottom:none">
+        <div class="match-meta"><div style="font-weight:600;color:var(--green)">#${m.id}</div><div>${fmtDate(m.date)}</div></div>
+        <div class="match-teams">
+          <span class="team-name">${m.local}</span>
+          <span id="sc-wrap-${m.id}"><span class="${cls}" onclick="editScoreInline(${m.id})">${label}</span></span>
+          <span class="team-name right">${m.visitor}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px;margin-left:6px">
+          <span style="font-size:11px;color:#aaa">${m.group}</span>
+          <button class="toggle-picks" onclick="togglePicks(${m.id},this)">👥 Picks</button>
+        </div>
       </div>
-      <div style="font-size:11px;color:#aaa;margin-left:8px">${m.group}</div>
+      <div class="picks-panel" id="picks-panel-${m.id}">${chips}</div>
     </div>`;
   });
   h+=`</div>`;
@@ -457,6 +490,12 @@ function saveEditInline(id){
   const rv=parseInt(rvEl.value);
   if(isNaN(rl)||isNaN(rv)||rl<0||rv<0){alert('Marcador inválido');return;}
   saveResult(id,rl,rv);
+}
+function togglePicks(id,btn){
+  const panel=document.getElementById('picks-panel-'+id);
+  if(!panel)return;
+  const open=panel.classList.toggle('open');
+  btn.textContent=open?'✕ Cerrar':'👥 Picks';
 }
 function setPartFilter(f){_partFilter=f;_partDay='';renderPartidos();}
 function setPartDay(d){_partDay=d;_partFilter='all';renderPartidos();}
